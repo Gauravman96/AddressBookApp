@@ -26,131 +26,152 @@ public class AddressBookApplication implements CommandLineRunner {
         Scanner sc = new Scanner(System.in);
 
         while(true){
-            System.out.println("Welcome to Address Book Program");
-            System.out.println("\n----- ADDRESS BOOK MENU -----");
+            System.out.println("\n--- ADDRESS BOOK MENU ---");
             System.out.println("1 Add Contact");
             System.out.println("2 Edit Contact");
             System.out.println("3 Delete Contact");
             System.out.println("4 View Contacts");
-            System.out.println("5 Exit");
+            System.out.println("5 Get By Name");
+            System.out.println("6 View by City (UC9)");
+            System.out.println("7 View by State (UC9)");
+            System.out.println("8 Count by City (UC10)");
+            System.out.println("9 Count by State (UC10)");
+            System.out.println("10 Exit");
 
-            System.out.print("Enter Choice: ");
             int choice = sc.nextInt();
             sc.nextLine();
 
             switch(choice){
 
-                // ADD CONTACT
+                // UC1 Add Contact
                 case 1:
-
                     System.out.print("First Name: ");
-                    String firstName = sc.nextLine();
+                    String f = sc.nextLine();
 
                     System.out.print("Last Name: ");
-                    String lastName = sc.nextLine();
+                    String l = sc.nextLine();
 
                     System.out.print("Address: ");
-                    String address = sc.nextLine();
+                    String a = sc.nextLine();
 
                     System.out.print("City: ");
-                    String city = sc.nextLine();
+                    String c = sc.nextLine();
 
                     System.out.print("State: ");
-                    String state = sc.nextLine();
+                    String s = sc.nextLine();
 
                     System.out.print("Zip: ");
-                    String zip = sc.nextLine();
+                    String z = sc.nextLine();
 
                     System.out.print("Phone: ");
-                    String phone = sc.nextLine();
+                    String p = sc.nextLine();
 
                     System.out.print("Email: ");
-                    String email = sc.nextLine();
+                    String e = sc.nextLine();
 
-                    Contact contact = new Contact(firstName,lastName,address,
-                            city,state,zip,phone,email);
-
+                    Contact contact = new Contact(f,l,a,c,s,z,p,e);
                     service.addContact(contact);
-
                     System.out.println("Contact Added!");
                     break;
 
-
-                // EDIT CONTACT
+                // UC2 Edit
                 case 2:
-
-                    System.out.print("Enter First Name to Edit: ");
+                    System.out.print("Enter Name to Edit: ");
                     String name = sc.nextLine();
 
                     System.out.print("New Last Name: ");
-                    String newLastName = sc.nextLine();
+                    String nl = sc.nextLine();
 
                     System.out.print("New Address: ");
-                    String newAddress = sc.nextLine();
+                    String na = sc.nextLine();
 
                     System.out.print("New City: ");
-                    String newCity = sc.nextLine();
+                    String nc = sc.nextLine();
 
                     System.out.print("New State: ");
-                    String newState = sc.nextLine();
+                    String ns = sc.nextLine();
 
                     System.out.print("New Zip: ");
-                    String newZip = sc.nextLine();
+                    String nz = sc.nextLine();
 
                     System.out.print("New Phone: ");
-                    String newPhone = sc.nextLine();
+                    String np = sc.nextLine();
 
                     System.out.print("New Email: ");
-                    String newEmail = sc.nextLine();
+                    String ne = sc.nextLine();
 
-                    Contact newContact = new Contact(name,newLastName,newAddress,
-                            newCity,newState,newZip,newPhone,newEmail);
-
-                    System.out.println(service.editContact(name,newContact));
-
+                    Contact newC = new Contact(name,nl,na,nc,ns,nz,np,ne);
+                    System.out.println(service.editContact(name,newC));
                     break;
 
-
-                // DELETE CONTACT
+                // UC3 Delete
                 case 3:
-
                     System.out.print("Enter Name to Delete: ");
-                    String deleteName = sc.nextLine();
-
-                    System.out.println(service.deleteContact(deleteName));
-
+                    String del = sc.nextLine();
+                    System.out.println(service.deleteContact(del));
                     break;
 
-
-                // VIEW CONTACTS
+                // UC4 View All
                 case 4:
-
-                    List<Contact> contacts = service.getAllContacts();
-
-                    for(Contact c : contacts){
-
-                        System.out.println("--------------------");
-                        System.out.println("Name: "+c.getFirstName()+" "+c.getLastName());
-                        System.out.println("City: "+c.getCity());
-                        System.out.println("Phone: "+c.getPhoneNumber());
-                        System.out.println("Email: "+c.getEmail());
-                    }
-
+                    List<Contact> list = service.getAllContacts();
+                    list.forEach(x ->
+                        System.out.println(
+                            x.getFirstName()+" | "+
+                            x.getCity()+" | "+
+                            x.getState()
+                        )
+                    );
                     break;
 
-
-                // EXIT
+                // UC5 Get By Name
                 case 5:
+                    System.out.print("Enter Name: ");
+                    Contact found = service.getContactByName(sc.nextLine());
 
+                    if(found != null){
+                        System.out.println(
+                            found.getFirstName()+" | "+
+                            found.getCity()+" | "+
+                            found.getState()
+                        );
+                    } else {
+                        System.out.println("Contact Not Found");
+                    }
+                    break;
+
+                // UC9 View by City
+                case 6:
+                    service.viewByCity().forEach((city,lst) -> {
+                        System.out.println("City: " + city);
+                        lst.forEach(cn -> System.out.println(" - " + cn.getFirstName()));
+                    });
+                    break;
+
+                // UC9 View by State
+                case 7:
+                    service.viewByState().forEach((state,lst) -> {
+                        System.out.println("State: " + state);
+                        lst.forEach(cn -> System.out.println(" - " + cn.getFirstName()));
+                    });
+                    break;
+
+                // UC10 Count by City
+                case 8:
+                    System.out.println(service.countByCity());
+                    break;
+
+                // UC10 Count by State
+                case 9:
+                    System.out.println(service.countByState());
+                    break;
+
+                case 10:
                     System.out.println("Exiting...");
                     System.exit(0);
 
-
                 default:
                     System.out.println("Invalid Choice");
-
             }
-
         }
     }
 }

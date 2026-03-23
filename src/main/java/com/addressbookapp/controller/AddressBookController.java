@@ -5,50 +5,47 @@ import com.addressbookapp.service.AddressBookService;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/contacts")
 public class AddressBookController {
 
-    private final AddressBookService contactService;
+    private final AddressBookService service;
 
-    public AddressBookController(AddressBookService contactService) {
-        this.contactService = contactService;
+    public AddressBookController(AddressBookService service){
+        this.service = service;
     }
 
-    // UC1 Add Contact
     @PostMapping("/add")
-    public Contact addContact(@RequestBody Contact contact) {
-
-        return contactService.addContact(contact);
+    public Contact add(@RequestBody Contact c){
+        return service.addContact(c);
     }
 
-    // UC2 Edit Contact
-    @PutMapping("/edit/{name}")
-    public String editContact(@PathVariable String name,
-                              @RequestBody Contact contact) {
-
-        return contactService.editContact(name, contact);
-    }
-
-    // UC3 Delete Contact
-    @DeleteMapping("/delete/{name}")
-    public String deleteContact(@PathVariable String name) {
-
-        return contactService.deleteContact(name);
-    }
-
-    // UC4 Get All Contacts
     @GetMapping("/all")
-    public List<Contact> getAllContacts() {
-
-        return contactService.getAllContacts();
+    public List<Contact> all(){
+        return service.getAllContacts();
     }
 
-    // UC5 Get Contact by Name
-    @GetMapping("/{name}")
-    public Contact getContactByName(@PathVariable String name) {
+    // UC9
+    @GetMapping("/city")
+    public Map<String,List<Contact>> city(){
+        return service.viewByCity();
+    }
 
-        return contactService.getContactByName(name);
+    @GetMapping("/state")
+    public Map<String,List<Contact>> state(){
+        return service.viewByState();
+    }
+
+    // UC10
+    @GetMapping("/count/city")
+    public Map<String,Long> countCity(){
+        return service.countByCity();
+    }
+
+    @GetMapping("/count/state")
+    public Map<String,Long> countState(){
+        return service.countByState();
     }
 }

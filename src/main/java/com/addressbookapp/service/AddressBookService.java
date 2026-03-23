@@ -3,33 +3,32 @@ package com.addressbookapp.service;
 import com.addressbookapp.model.Contact;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
-
-
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class AddressBookService {
 
     List<Contact> contactList = new ArrayList<>();
 
-
-    // UC1 Add Contact
+    // UC1 + UC7
     public Contact addContact(Contact contact) {
 
-        contactList.add(contact);
+        if(contactList.contains(contact)){
+            System.out.println("Duplicate Not Allowed");
+            return null;
+        }
 
-        return contact ;
+        contactList.add(contact);
+        return contact;
     }
 
-
-    // UC2 Edit Contact
+    // UC2
     public String editContact(String name, Contact newContact) {
 
-        for (Contact c : contactList) {
+        for(Contact c : contactList){
+            if(c.getFirstName().equalsIgnoreCase(name)){
 
-            if (c.getFirstName().equalsIgnoreCase(name)) {
-                  
                 c.setLastName(newContact.getLastName());
                 c.setAddress(newContact.getAddress());
                 c.setCity(newContact.getCity());
@@ -38,48 +37,53 @@ public class AddressBookService {
                 c.setPhoneNumber(newContact.getPhoneNumber());
                 c.setEmail(newContact.getEmail());
 
-                return "Contact Updated";
+                return "Updated";
             }
         }
-
-        return "Contact Not Found";
+        return "Not Found";
     }
 
-
-    // UC3 Delete Contact
+    // UC3
     public String deleteContact(String name) {
-
-        for (Contact c : contactList) {
-
-            if (c.getFirstName().equalsIgnoreCase(name)) {
-
-                contactList.remove(c);
-                return "Contact Deleted";
-            }
-        }
-
-        return "Contact Not Found";
+        boolean removed = contactList.removeIf(
+                c -> c.getFirstName().equalsIgnoreCase(name));
+        return removed ? "Deleted" : "Not Found";
     }
 
-
-    // UC4 Multiple Contacts (List already handling)
-    public List<Contact> getAllContacts() {
-
+    // UC4
+    public List<Contact> getAllContacts(){
         return contactList;
     }
 
+    // UC5
+    public Contact getContactByName(String name){
+        return contactList.stream()
+                .filter(c -> c.getFirstName().equalsIgnoreCase(name))
+                .findFirst()
+                .orElse(null);
+    }
 
-    // UC5 Get Contact by Name
-    public Contact getContactByName(String name) {
+    // UC9
+    public Map<String,List<Contact>> viewByCity(){
+        return contactList.stream()
+                .collect(Collectors.groupingBy(Contact::getCity));
+    }
 
-        for (Contact c : contactList) {
+    public Map<String,List<Contact>> viewByState(){
+        return contactList.stream()
+                .collect(Collectors.groupingBy(Contact::getState));
+    }
 
-            if (c.getFirstName().equalsIgnoreCase(name)) {
+    // UC10
+    public Map<String,Long> countByCity(){
+        return contactList.stream()
+                .collect(Collectors.groupingBy(
+                        Contact::getCity, Collectors.counting()));
+    }
 
-                return c;
-            }
-        }
-
-        return null;
+    public Map<String,Long> countByState(){
+        return contactList.stream()
+                .collect(Collectors.groupingBy(
+                        Contact::getState, Collectors.counting()));
     }
 }
